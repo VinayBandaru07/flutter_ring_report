@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <application
         android:label="ring_report"
         android:name="${applicationName}"
