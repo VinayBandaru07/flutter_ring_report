@@ -76,10 +76,14 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                             width: 80.5,
                             height: 79.5,
                             decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(50)),
                             child: element.name != null
                                 ? Center(
-                                    child: Text(element.name.toString()[0]))
+                                    child: Text(
+                                    element.name.toString()[0],
+                                    style: TextStyle(fontSize: 40),
+                                  ))
                                 : Image.network(
                                     'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
                                     // fit: BoxFit.fitWidth,
