@@ -1,7 +1,9 @@
 import 'package:call_log/call_log.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:ring_report/screens/contact_info.dart';
+import 'package:ring_report/screens/contact_log_history.dart';
 
 class ContactDetails extends StatefulWidget {
   const ContactDetails(
@@ -13,6 +15,35 @@ class ContactDetails extends StatefulWidget {
 }
 
 class _ContactDetailsState extends State<ContactDetails> {
+  Iterable<CallLogEntry> entries = [];
+
+  void getPermissionUser() async {
+    var status = Permission.phone;
+    if (await status.isGranted) {
+      getLog();
+    } else {
+      await Permission.phone.request();
+      getPermissionUser();
+    }
+  }
+
+  void getLog() async {
+    entries = await CallLog.query(
+      durationFrom: 0,
+      durationTo: 60,
+      // name: 'John Doe',
+      number: widget.contactData.number,
+      // type: CallType.incoming,
+    );
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getPermissionUser();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +112,8 @@ class _ContactDetailsState extends State<ContactDetails> {
                 body: TabBarView(
                   children: <Widget>[
                     //List of widgets
-                    ContactInfo(contactData: widget.contactData), Text('')
+                    ContactInfo(contactData: widget.contactData),
+                    ContactLogHistory(contactLogs: entries)
                   ],
                 ),
               ),
