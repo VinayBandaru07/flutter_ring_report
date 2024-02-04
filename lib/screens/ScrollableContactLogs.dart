@@ -1,6 +1,7 @@
 import 'package:call_log/call_log.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ring_report/screens/contact_details.dart';
 
 class ScrollableContactLogs extends StatefulWidget {
   ScrollableContactLogs({
@@ -40,14 +41,19 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
 
   List<Widget> makeListItems() {
     List<Widget> tempList = [];
-    widget.contactLogs.forEach((element) {
+    for (final (index, element) in widget.contactLogs.indexed) {
       tempList.add(Padding(
         padding: const EdgeInsets.all(10),
         child: Material(
           color: Colors.green,
           borderRadius: BorderRadius.circular(12),
           child: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return ContactDetails(
+                    heroIndex: '${index}contactLog', contactData: element);
+              }));
+            },
             child: FittedBox(
               fit: BoxFit.cover,
               // width: 120,
@@ -72,22 +78,25 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                           SizedBox(
                             width: 5,
                           ),
-                          Container(
-                            width: 80.5,
-                            height: 79.5,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(50)),
-                            child: element.name != null
-                                ? Center(
-                                    child: Text(
-                                    element.name.toString()[0],
-                                    style: TextStyle(fontSize: 40),
-                                  ))
-                                : Image.network(
-                                    'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
-                                    // fit: BoxFit.fitWidth,
-                                  ),
+                          Hero(
+                            tag: '${index}contactLog',
+                            child: Container(
+                              width: 80.5,
+                              height: 79.5,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(50)),
+                              child: element.name != null
+                                  ? Center(
+                                      child: Text(
+                                      element.name.toString()[0],
+                                      style: TextStyle(fontSize: 40),
+                                    ))
+                                  : Image.network(
+                                      'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
+                                      // fit: BoxFit.fitWidth,
+                                    ),
+                            ),
                           ),
                         ],
                       ),
@@ -124,7 +133,7 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
           ),
         ),
       ));
-    });
+    }
     return tempList;
   }
 
