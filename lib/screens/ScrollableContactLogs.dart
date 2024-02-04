@@ -113,12 +113,13 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                           element.name != null
                               ? element.name.toString()
                               : element.number.toString(),
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(
+                              fontSize: 20, color: Colors.white),
                         ),
                         Text(
                           element.timestamp.toString(),
                           style: const TextStyle(
-                              fontSize: 20, color: Colors.white),
+                              fontSize: 15, color: Colors.white),
                         ),
                         Text('HMM'),
                       ],

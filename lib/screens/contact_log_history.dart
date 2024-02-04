@@ -40,94 +40,138 @@ class _CitizenHospitalDayBookingsState extends State<ContactLogHistory> {
 
   List<Widget> makeListItems() {
     List<Widget> tempList = [];
+    double iconSize = 40.0;
+    Color iconColor = Colors.green;
     for (final (index, element) in widget.contactLogs.indexed) {
       tempList.add(Padding(
         padding: const EdgeInsets.all(10),
         child: Material(
           color: Colors.green,
           borderRadius: BorderRadius.circular(12),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ContactDetails(
-                    heroIndex: '${index}contactLog', contactData: element);
-              }));
-            },
-            child: FittedBox(
-              fit: BoxFit.cover,
-              // width: 120,
-              // height: 94,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Card(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      color: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50.0),
-                      ),
-                      elevation: 4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Hero(
-                            tag: '${index}contactLog',
-                            child: Container(
-                              width: 80.5,
-                              height: 79.5,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(50)),
-                              child: element.name != null
-                                  ? Center(
-                                      child: Text(
-                                      element.name.toString()[0],
-                                      style: TextStyle(fontSize: 40),
-                                    ))
-                                  : Image.network(
-                                      'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
-                                      // fit: BoxFit.fitWidth,
-                                    ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      // margin: EdgeInsets.all(5),
+          child: FittedBox(
+            fit: BoxFit.cover,
+            // width: 120,
+            // height: 94,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Card(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    color: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50.0),
                     ),
-                  ),
-                  SizedBox(
-                    height: 100,
+                    elevation: 4,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          element.name != null
-                              ? element.name.toString()
-                              : element.number.toString(),
-                          style: const TextStyle(color: Colors.white),
+                        SizedBox(
+                          width: 5,
                         ),
-                        Text(
-                          element.timestamp.toString(),
-                          style: const TextStyle(
-                              fontSize: 20, color: Colors.white),
+                        Hero(
+                          tag: '${index}contactLog',
+                          child: Container(
+                            width: 80.5,
+                            height: 79.5,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(50)),
+                            child: switch (element.callType) {
+                              // TODO: Handle this case.
+                              null => null,
+                              // TODO: Handle this case.
+                              CallType.incoming => Icon(
+                                  Icons.call_received,
+                                  size: iconSize,
+                                  color: iconColor,
+                                ),
+                              // TODO: Handle this case.
+                              CallType.outgoing => Icon(
+                                  Icons.call_made,
+                                  size: iconSize,
+                                  color: iconColor,
+                                ),
+                              // TODO: Handle this case.
+                              CallType.missed => Icon(
+                                  Icons.call_missed,
+                                  size: iconSize,
+                                  color: Colors.yellowAccent,
+                                ),
+                              // TODO: Handle this case.
+                              CallType.voiceMail => Icon(
+                                  Icons.voicemail,
+                                  size: iconSize,
+                                  color: Colors.green,
+                                ),
+                              // TODO: Handle this case.
+                              CallType.rejected => Icon(
+                                  Icons.call_end,
+                                  size: iconSize,
+                                  color: Colors.red,
+                                ),
+                              // TODO: Handle this case.
+                              CallType.blocked => Icon(
+                                  Icons.block,
+                                  size: iconSize,
+                                  color: Colors.red,
+                                ),
+                              // TODO: Handle this case.
+                              CallType.answeredExternally => null,
+                              // TODO: Handle this case.
+                              CallType.unknown => Icon(
+                                  Icons.question_mark,
+                                  size: iconSize,
+                                  color: Colors.blue,
+                                ),
+                              // TODO: Handle this case.
+                              CallType.wifiIncoming => Icon(
+                                  Icons.wifi_calling,
+                                  size: iconSize,
+                                  color: iconColor,
+                                ),
+                              // TODO: Handle this case.
+                              CallType.wifiOutgoing => Icon(
+                                  Icons.wifi_calling,
+                                  size: iconSize,
+                                  color: iconColor,
+                                ),
+                            },
+                          ),
                         ),
-                        Text('HMM'),
                       ],
                     ),
+                    // margin: EdgeInsets.all(5),
                   ),
-                  SizedBox(
-                    width: 40,
-                  )
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        element.name != null
+                            ? element.name.toString()
+                            : element.number.toString(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        element.timestamp.toString(),
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                      Text('HMM'),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 40,
+                )
+              ],
             ),
           ),
         ),
