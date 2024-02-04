@@ -38,6 +38,7 @@ dependencies:
   call_log: ^4.0.0
   permission_handler: ^11.2.0
   font_awesome_flutter: ^10.7.0
+  flutter_speed_dial: ^7.0.0
 
 dev_dependencies:
   flutter_test:

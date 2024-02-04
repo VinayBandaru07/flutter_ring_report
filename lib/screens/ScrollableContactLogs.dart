@@ -8,7 +8,7 @@ class ScrollableContactLogs extends StatefulWidget {
     super.key,
     required this.contactLogs,
   });
-  final Iterable<CallLogEntry> contactLogs;
+  final contactLogs;
   @override
   State<ScrollableContactLogs> createState() =>
       _CitizenHospitalDayBookingsState();
@@ -41,7 +41,7 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
 
   List<Widget> makeListItems() {
     List<Widget> tempList = [];
-    for (final (index, element) in widget.contactLogs.indexed) {
+    widget.contactLogs?.toList().asMap().forEach((index, element) {
       tempList.add(Padding(
         padding: const EdgeInsets.all(10),
         child: Material(
@@ -117,7 +117,7 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                               fontSize: 20, color: Colors.white),
                         ),
                         Text(
-                          element.timestamp.toString(),
+                          element.duration.toString(),
                           style: const TextStyle(
                               fontSize: 15, color: Colors.white),
                         ),
@@ -134,18 +134,9 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
           ),
         ),
       ));
-    }
+    });
     return tempList;
   }
-
-  Widget noResultsWidget = const Center(
-    child: Text(
-      'Bookings not opened',
-      style: TextStyle(
-        fontSize: 30,
-      ),
-    ),
-  );
 
   @override
   void initState() {
