@@ -33,10 +33,8 @@ class _RingReportState extends State<RingReport> {
 
   sortWithDuration() {
     List<CallLogEntry> temp = entries.toList();
-    print(temp.last.duration);
-    temp.sort((a, b) => (a.duration)!.compareTo((b.duration!)));
+    temp.sort((b, a) => (a.duration)!.compareTo((b.duration!)));
     entries = temp;
-    print(temp.last.duration);
     setState(() {});
   }
 
