@@ -85,7 +85,7 @@ class _RingReportState extends State<RingReport> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue[100],
         leading: BackButton(
           color: Colors.white,
           onPressed: () {
@@ -94,11 +94,11 @@ class _RingReportState extends State<RingReport> {
         ),
         title: Text(
           'Ring Report',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-              color: Colors.white54,
+              color: Colors.white,
               onPressed: () async {
                 try {
                   SearchDetails result = await Navigator.push(context,
@@ -113,7 +113,10 @@ class _RingReportState extends State<RingReport> {
                   }
                 } catch (e) {}
               },
-              icon: Icon(Icons.search))
+              icon: Icon(
+                Icons.search,
+                size: 30,
+              ))
         ],
       ),
       body: SafeArea(
@@ -130,7 +133,7 @@ class _RingReportState extends State<RingReport> {
               iconTheme: IconThemeData(size: 30),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20))),
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.blue[200],
               children: [
                 SpeedDialChild(
                   child: const Icon(Icons.timer, color: Colors.white),
