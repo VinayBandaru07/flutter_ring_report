@@ -46,7 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Hospitals'),
+        title: Text('Search Call Log'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -55,7 +55,7 @@ class _SearchScreenState extends State<SearchScreen> {
             // Search text field
             TextField(
               controller: searchTextController,
-              decoration: InputDecoration(labelText: 'Search'),
+              decoration: InputDecoration(labelText: 'Search name or phone'),
             ),
             SizedBox(height: 16.0),
             // Search button

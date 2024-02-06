@@ -41,9 +41,12 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
     return iconsList;
   }
 
+  double iconSize = 25.0;
+  Color iconColor = Colors.green;
   List<Widget> makeListItems() {
     List<Widget> tempList = [];
     widget.contactLogs?.toList().asMap().forEach((index, element) {
+      DateTime logTime = DateTime.fromMillisecondsSinceEpoch(element.timestamp);
       tempList.add(GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -57,7 +60,7 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
             padding: const EdgeInsets.all(0),
             child: Material(
               color: Colors.blueGrey,
-              // borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -80,22 +83,29 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                           ),
                           Hero(
                             tag: '${index}contactLog',
-                            child: Container(
-                              width: 80.5,
-                              height: 79.5,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(50)),
-                              child: element.name != null
-                                  ? Center(
-                                      child: Text(
-                                      element.name.toString()[0],
-                                      style: TextStyle(fontSize: 40),
-                                    ))
-                                  : Image.network(
-                                      'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
-                                      // fit: BoxFit.fitWidth,
-                                    ),
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Container(
+                                width: 80.5,
+                                height: 79.5,
+                                decoration: BoxDecoration(
+                                    color: Colors.white10,
+                                    borderRadius: BorderRadius.circular(50)),
+                                child: element.name != null
+                                    ? Center(
+                                        child: Text(
+                                        element.name.toString()[0],
+                                        style: TextStyle(
+                                          fontSize: 40,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w200,
+                                        ),
+                                      ))
+                                    : Image.network(
+                                        'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
+                                        // fit: BoxFit.fitWidth,
+                                      ),
+                              ),
                             ),
                           ),
                         ],
@@ -115,14 +125,87 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                               ? element.name.toString()
                               : element.number.toString(),
                           style: const TextStyle(
-                              fontSize: 20, color: Colors.white),
+                              fontFamily: 'Gowun Batang',
+                              fontSize: 20,
+                              color: Colors.white),
+                        ),
+                        SizedBox(
+                          child: switch (element.callType) {
+                            // TODO: Handle this case.
+                            null => null,
+                            // TODO: Handle this case.
+                            CallType.incoming => Icon(
+                                Icons.call_received,
+                                size: iconSize,
+                                color: iconColor,
+                              ),
+                            // TODO: Handle this case.
+                            CallType.outgoing => Icon(
+                                Icons.call_made,
+                                size: iconSize,
+                                color: iconColor,
+                              ),
+                            // TODO: Handle this case.
+                            CallType.missed => Icon(
+                                Icons.call_missed,
+                                size: iconSize,
+                                color: Colors.yellowAccent,
+                              ),
+                            // TODO: Handle this case.
+                            CallType.voiceMail => Icon(
+                                Icons.voicemail,
+                                size: iconSize,
+                                color: Colors.green,
+                              ),
+                            // TODO: Handle this case.
+                            CallType.rejected => Icon(
+                                Icons.call_end,
+                                size: iconSize,
+                                color: Colors.red,
+                              ),
+                            // TODO: Handle this case.
+                            CallType.blocked => Icon(
+                                Icons.block,
+                                size: iconSize,
+                                color: Colors.red,
+                              ),
+                            // TODO: Handle this case.
+                            CallType.answeredExternally => null,
+                            // TODO: Handle this case.
+                            CallType.unknown => Icon(
+                                Icons.question_mark,
+                                size: iconSize,
+                                color: Colors.blue,
+                              ),
+                            // TODO: Handle this case.
+                            CallType.wifiIncoming => Icon(
+                                Icons.wifi_calling,
+                                size: iconSize,
+                                color: iconColor,
+                              ),
+                            // TODO: Handle this case.
+                            CallType.wifiOutgoing => Icon(
+                                Icons.wifi_calling,
+                                size: iconSize,
+                                color: iconColor,
+                              ),
+                            // TODO: Handle this case.
+                            Object() => null,
+                          },
                         ),
                         Text(
-                          element.duration.toString(),
-                          style: const TextStyle(
-                              fontSize: 15, color: Colors.white),
+                          logTime.hour.toString() +
+                              ':' +
+                              logTime.minute.toString() +
+                              ', ' +
+                              logTime.day.toString() +
+                              '/' +
+                              logTime.month.toString() +
+                              '/' +
+                              logTime.year.toString(),
+                          style: TextStyle(
+                              color: Colors.white, fontFamily: 'Gowun Batang'),
                         ),
-                        Text('HMM'),
                       ],
                     ),
                   ),
@@ -140,12 +223,14 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                                 //app is not opened
                               }
                             },
+                            color: Colors.white54,
                             icon: Icon(Icons.message)),
                         IconButton(
                             onPressed: () async {
                               await FlutterPhoneDirectCaller.callNumber(
                                   element.number);
                             },
+                            color: Colors.white54,
                             icon: Icon(Icons.call))
                       ],
                     ),

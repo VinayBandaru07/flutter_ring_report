@@ -48,79 +48,96 @@ class _ContactDetailsState extends State<ContactDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: <Widget>[
-          SliverAppBar(
-            pinned: false,
-            snap: false,
-            floating: true,
-            onStretchTrigger: () async {
-              // Triggers when stretching
-            },
+      body: SafeArea(
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: <Widget>[
+            SliverAppBar(
+              pinned: false,
+              snap: false,
+              floating: true,
+              onStretchTrigger: () async {
+                // Triggers when stretching
+              },
 
-            // [stretchTriggerOffset] describes the amount of overscroll that must occur
-            // to trigger [onStretchTrigger]
-            //
-            // Setting [stretchTriggerOffset] to a value of 300.0 will trigger
-            // [onStretchTrigger] when the user has overscrolled by 300.0 pixels.
-            stretchTriggerOffset: 300.0,
-            expandedHeight: 200.0,
-            flexibleSpace: FlexibleSpaceBar(
-              title: FittedBox(
-                child: widget.contactData.name != null
-                    ? Text(
-                        widget.contactData.name.toString()[0],
-                        style: TextStyle(fontSize: 40),
-                      )
-                    : Text(
-                        widget.contactData.number.toString(),
-                        style: TextStyle(fontSize: 25),
+              // [stretchTriggerOffset] describes the amount of overscroll that must occur
+              // to trigger [onStretchTrigger]
+              //
+              // Setting [stretchTriggerOffset] to a value of 300.0 will trigger
+              // [onStretchTrigger] when the user has overscrolled by 300.0 pixels.
+              stretchTriggerOffset: 300.0,
+              expandedHeight: 280.0,
+
+              flexibleSpace: FlexibleSpaceBar(
+                // title: Row(
+                //   mainAxisSize: MainAxisSize.max,
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     FittedBox(
+                //       child: widget.contactData.name != null
+                //           ? Text(
+                //               widget.contactData.name.toString(),
+                //               style:
+                //                   TextStyle(fontSize: 20, color: Colors.white),
+                //             )
+                //           : Text(
+                //               widget.contactData.number.toString(),
+                //               style:
+                //                   TextStyle(fontSize: 25, color: Colors.white),
+                //             ),
+                //     ),
+                //   ],
+                // ),
+                background: Hero(
+                    tag: widget.heroIndex,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: widget.contactData.name != null
+                          ? Center(
+                              child: Text(
+                              widget.contactData.name.toString()[0],
+                              style: TextStyle(
+                                  fontSize: 180,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w300),
+                            ))
+                          : Image.network(
+                              'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
+                              fit: kIsWeb ? BoxFit.cover : BoxFit.fill,
+                              // fit: BoxFit.fitWidth,
+                            ),
+                    )),
+              ),
+            ),
+            SliverFillRemaining(
+              child: DefaultTabController(
+                initialIndex: 0,
+                length: 2,
+                child: Scaffold(
+                  appBar: TabBar(
+                    tabs: <Widget>[
+                      Tab(
+                        icon: Icon(Icons.info_outline),
+                        text: 'Info',
                       ),
-              ),
-              background: Hero(
-                  tag: widget.heroIndex,
-                  child: widget.contactData.name != null
-                      ? Center(
-                          child: Text(
-                          widget.contactData.name.toString()[0],
-                          style: TextStyle(fontSize: 40),
-                        ))
-                      : Image.network(
-                          'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
-                          fit: kIsWeb ? BoxFit.cover : BoxFit.fill,
-                          // fit: BoxFit.fitWidth,
-                        )),
-            ),
-          ),
-          SliverFillRemaining(
-            child: DefaultTabController(
-              initialIndex: 0,
-              length: 2,
-              child: Scaffold(
-                appBar: TabBar(
-                  tabs: <Widget>[
-                    Tab(
-                      icon: Icon(Icons.info_outline),
-                      text: 'Info',
-                    ),
-                    Tab(
-                      icon: Icon(Icons.event_seat_outlined),
-                      text: 'Call Log',
-                    ),
-                  ],
-                ),
-                body: TabBarView(
-                  children: <Widget>[
-                    //List of widgets
-                    ContactInfo(contactData: widget.contactData),
-                    ContactLogHistory(contactLogs: entries)
-                  ],
+                      Tab(
+                        icon: Icon(Icons.event_seat_outlined),
+                        text: 'Call Log',
+                      ),
+                    ],
+                  ),
+                  body: TabBarView(
+                    children: <Widget>[
+                      //List of widgets
+                      ContactInfo(contactData: widget.contactData),
+                      ContactLogHistory(contactLogs: entries)
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {

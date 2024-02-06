@@ -85,9 +85,20 @@ class _RingReportState extends State<RingReport> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.blue,
+        leading: BackButton(
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          'Ring Report',
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           IconButton(
+              color: Colors.white54,
               onPressed: () async {
                 try {
                   SearchDetails result = await Navigator.push(context,

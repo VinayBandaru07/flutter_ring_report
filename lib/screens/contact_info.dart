@@ -27,24 +27,33 @@ class _ContactInfoState extends State<ContactInfo> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    ListTile(
-                      leading: const Icon(Icons.person_2),
-                      title: Text(contactData.name.toString()),
+                    contactData.name != null
+                        ? ListTile(
+                            leading: const Icon(Icons.person_2),
+                            title: Text(contactData.name.toString()),
 //               subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
-                    ),
+                          )
+                        : SizedBox(),
                     ListTile(
                       leading: const Icon(Icons.phone),
                       title: Text(contactData.number.toString()),
 //               subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
                     ),
                     ListTile(
-                      leading: const Icon(FontAwesomeIcons.userDoctor),
-                      title: Text(contactData.timestamp.toString()),
+                      leading: const Icon(FontAwesomeIcons.clock),
+                      title: Text(DateTime.fromMillisecondsSinceEpoch(
+                              contactData.timestamp as int)
+                          .toString()),
 //               subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.verified),
-                      title: const Text('Is Approved: '),
+                      leading: const Icon(FontAwesomeIcons.stopwatch),
+                      title: Text(contactData.duration.toString() + ' Seconds'),
+//               subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
+                    ),
+                    ListTile(
+                      leading: const Icon(FontAwesomeIcons.arrowRight),
+                      title: Text(contactData.callType.toString()),
 //               subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
                     ),
                   ],
