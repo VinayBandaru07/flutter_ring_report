@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ring_report/screens/contact_info.dart';
 import 'package:ring_report/screens/contact_log_history.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactDetails extends StatefulWidget {
   const ContactDetails(
@@ -122,8 +123,15 @@ class _ContactDetailsState extends State<ContactDetails> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.chat_outlined),
+        onPressed: () async {
+          Uri sms = Uri.parse('tel://${widget.contactData.number}');
+          if (await launchUrl(sms)) {
+            //app opened
+          } else {
+            //app is not opened
+          }
+        },
+        child: const Icon(Icons.dialpad),
       ),
     );
   }

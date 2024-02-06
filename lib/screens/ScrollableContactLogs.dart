@@ -2,6 +2,8 @@ import 'package:call_log/call_log.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ring_report/screens/contact_details.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ScrollableContactLogs extends StatefulWidget {
   ScrollableContactLogs({
@@ -42,31 +44,29 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
   List<Widget> makeListItems() {
     List<Widget> tempList = [];
     widget.contactLogs?.toList().asMap().forEach((index, element) {
-      tempList.add(Padding(
-        padding: const EdgeInsets.all(10),
-        child: Material(
-          color: Colors.green,
-          borderRadius: BorderRadius.circular(12),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ContactDetails(
-                    heroIndex: '${index}contactLog', contactData: element);
-              }));
-            },
-            child: FittedBox(
-              fit: BoxFit.cover,
-              // width: 120,
-              // height: 94,
+      tempList.add(GestureDetector(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return ContactDetails(
+                heroIndex: '${index}contactLog', contactData: element);
+          }));
+        },
+        child: Card(
+          elevation: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(0),
+            child: Material(
+              color: Colors.blueGrey,
+              // borderRadius: BorderRadius.circular(12),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: Card(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                      color: Colors.blueAccent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50.0),
                       ),
@@ -105,6 +105,7 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                   ),
                   SizedBox(
                     height: 100,
+                    // width: 155,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,9 +126,30 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: 40,
-                  )
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                            onPressed: () async {
+                              Uri sms = Uri.parse('sms:${element.number}');
+                              if (await launchUrl(sms)) {
+                                //app opened
+                              } else {
+                                //app is not opened
+                              }
+                            },
+                            icon: Icon(Icons.message)),
+                        IconButton(
+                            onPressed: () async {
+                              await FlutterPhoneDirectCaller.callNumber(
+                                  element.number);
+                            },
+                            icon: Icon(Icons.call))
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
