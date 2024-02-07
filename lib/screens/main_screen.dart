@@ -103,7 +103,9 @@ class _RingReportState extends State<RingReport> {
                 try {
                   SearchDetails result = await Navigator.push(context,
                       MaterialPageRoute(builder: (context) {
-                    return SearchScreen();
+                    return SearchScreen(
+                      entries: entries,
+                    );
                   }));
                   if (result.searchText.isNotEmpty) {
                     print(result.searchText);

@@ -1,3 +1,4 @@
+import 'package:call_log/call_log.dart';
 import 'package:flutter/material.dart';
 
 // Create a class to hold search details
@@ -34,6 +35,10 @@ SearchType determineSearchType(String searchQuery) {
 }
 
 class SearchScreen extends StatefulWidget {
+  final Iterable<CallLogEntry> entries;
+
+  const SearchScreen({super.key, required this.entries});
+
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
@@ -42,11 +47,74 @@ class _SearchScreenState extends State<SearchScreen> {
   // Initial values for the radio buttons and search text
   TextEditingController searchTextController = TextEditingController();
 
+  List searchedItems = [];
+
+  List namesUnique = [];
+  List numbersUnique = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.entries.toList().asMap().forEach((ind, element) {
+      if (element.name != null) {
+        namesUnique.add(element.name);
+      }
+      numbersUnique.add(element.number);
+    });
+    namesUnique = namesUnique.toSet().toList();
+    numbersUnique = numbersUnique.toSet().toList();
+    print(namesUnique);
+    print('************************************************************');
+    print(numbersUnique);
+    print('************************************************************');
+    print(namesUnique.indexOf('null9533353404'));
+    print('************************************************************');
+    print(numbersUnique.indexOf('9533353404'));
+    print('************************************************************');
+  }
+
+  void getLog(SearchDetails searchDetails) {
+    searchedItems.clear();
+    if (searchDetails.searchType == SearchType.Name) {
+      namesUnique.forEach((element) {
+        if (element
+            .toLowerCase()
+            .contains(searchDetails.searchText.toLowerCase())) {
+          searchedItems.add(element);
+        }
+      });
+    } else {
+      numbersUnique.asMap().forEach((ind, element) {
+        if (element.contains(searchDetails.searchText.toLowerCase())) {
+          searchedItems.add(element);
+        }
+      });
+    }
+
+    setState(() {});
+  }
+
+  List<ListTile> getSearchSuggestionItems(SearchController controller) {
+    List<ListTile> items = [];
+    searchedItems = searchedItems.toSet().toList();
+    for (var element in searchedItems) {
+      items.add(ListTile(
+        title: Text(element.toString()),
+        onTap: () {
+          controller.closeView(element);
+        },
+      ));
+    }
+    return items;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Call Log'),
+        title: Text(
+            '${namesUnique.length.toString()} + ${numbersUnique.length.toString()}'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -57,6 +125,33 @@ class _SearchScreenState extends State<SearchScreen> {
               controller: searchTextController,
               decoration: InputDecoration(labelText: 'Search name or phone'),
             ),
+            SearchAnchor(
+                isFullScreen: true,
+                builder: (BuildContext context, SearchController controller) {
+                  controller.addListener(() {
+                    String searchText = controller.text;
+                    SearchDetails searchDetails = SearchDetails(
+                        searchText: searchText,
+                        searchType: determineSearchType(searchText));
+                    getLog(searchDetails);
+                  });
+                  return SearchBar(
+                    controller: controller,
+                    padding: const MaterialStatePropertyAll<EdgeInsets>(
+                        EdgeInsets.symmetric(horizontal: 16.0)),
+                    onTap: () {
+                      controller.openView();
+                    },
+                    onChanged: (_) {
+                      controller.openView();
+                    },
+                    leading: const Icon(Icons.search),
+                  );
+                },
+                suggestionsBuilder:
+                    (BuildContext context, SearchController controller) {
+                  return getSearchSuggestionItems(controller);
+                }),
             SizedBox(height: 16.0),
             // Search button
             ElevatedButton(
