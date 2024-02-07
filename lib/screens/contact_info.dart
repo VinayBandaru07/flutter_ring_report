@@ -30,7 +30,10 @@ class _ContactInfoState extends State<ContactInfo> {
                     contactData.name != null
                         ? ListTile(
                             leading: const Icon(Icons.person_2),
-                            title: Text(contactData.name.toString()),
+                            title: Text(
+                              contactData.name.toString(),
+                              style: TextStyle(color: Colors.black),
+                            ),
 //               subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
                           )
                         : SizedBox(),
@@ -58,6 +61,7 @@ class _ContactInfoState extends State<ContactInfo> {
                     ),
                   ],
                 ),
+                color: Colors.blue[100],
               ),
 
               // Text('Gender' + hospitalData?['gender']),

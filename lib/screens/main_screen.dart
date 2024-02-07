@@ -1,10 +1,12 @@
 import 'package:call_log/call_log.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ring_report/screens/ScrollableContactLogs.dart';
 import 'package:ring_report/screens/search_screen.dart';
+import 'package:toast/toast.dart';
 
 class AlwaysDisabledFocusNode extends FocusNode {
   @override
@@ -54,6 +56,7 @@ class _RingReportState extends State<RingReport> {
   var entries;
   bool isSearched = false;
   bool isSorted = false;
+  bool isPermanentlyDisabled = false;
 
   List searchedItems = [];
 
@@ -78,7 +81,15 @@ class _RingReportState extends State<RingReport> {
     searchedItems = searchedItems.toSet().toList();
     for (var element in searchedItems) {
       items.add(ListTile(
-        title: Text(element.toString()),
+        shape: Border.all(color: Colors.white),
+        contentPadding: EdgeInsets.all(15),
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            element.toString(),
+            style: TextStyle(color: Colors.black87, fontSize: 20),
+          ),
+        ),
         onTap: () {
           if (element.isNotEmpty) {
             isSearched = true;
@@ -86,6 +97,7 @@ class _RingReportState extends State<RingReport> {
           }
           controller.closeView(element);
         },
+        tileColor: Colors.blue[100],
       ));
     }
     return items;
@@ -124,6 +136,11 @@ class _RingReportState extends State<RingReport> {
     var status = Permission.phone;
     if (await status.isGranted) {
       getLog();
+    } else if (await status.isPermanentlyDenied) {
+      isPermanentlyDisabled = true;
+      Toast.show('Permissions Permanently Disabled',
+          duration: 5, gravity: Toast.bottom);
+      setState(() {});
     } else {
       await Permission.phone.request();
       getPermissionUser();
@@ -176,13 +193,15 @@ class _RingReportState extends State<RingReport> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue[100],
         leading: BackButton(
           color: Colors.white,
           onPressed: () {
-            Navigator.pop(context);
+            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
           },
         ),
         title: Text(
@@ -217,10 +236,18 @@ class _RingReportState extends State<RingReport> {
       body: SafeArea(
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 70.0),
-              child: ScrollableContactLogs(contactLogs: entries),
-            ),
+            isPermanentlyDisabled
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: Text(
+                          'Permissions diabled permanently, Kindly open App settings and allow permissions.'),
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(top: 70.0),
+                    child: ScrollableContactLogs(contactLogs: entries),
+                  ),
             Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: SearchAnchor(
@@ -270,38 +297,42 @@ class _RingReportState extends State<RingReport> {
               backgroundColor: Colors.blue[200],
               children: [
                 SpeedDialChild(
+                  elevation: 0,
                   child: const Icon(Icons.timer, color: Colors.white),
                   label: 'Duration',
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.blue[200],
                   onTap: () {
                     isSorted = true;
                     sortWithDuration();
                   },
                 ),
                 SpeedDialChild(
+                  elevation: 0,
                   child: const Icon(FontAwesomeIcons.star, color: Colors.white),
                   label: 'Newest',
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.blue[200],
                   onTap: () {
                     isSorted = true;
                     sortWithTimeStampNew();
                   },
                 ),
                 SpeedDialChild(
+                  elevation: 0,
                   child:
                       const Icon(FontAwesomeIcons.clock, color: Colors.white),
                   label: 'Oldest',
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.blue[200],
                   onTap: () {
                     isSorted = true;
                     sortWithTimeStampOld();
                   },
                 ),
                 SpeedDialChild(
+                  elevation: 0,
                   visible: isSorted,
                   child: const Icon(Icons.clear, color: Colors.white),
                   label: 'Clear',
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.redAccent,
                   onTap: () {
                     isSorted = false;
                     setToDefault();
@@ -320,7 +351,7 @@ class _RingReportState extends State<RingReport> {
                     isSearched = false;
                     setToDefault();
                   },
-                  backgroundColor: Colors.deepPurpleAccent,
+                  backgroundColor: Colors.redAccent,
                   child: Icon(Icons.search_off_sharp),
                 )),
           ), // button second// button third

@@ -59,7 +59,7 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
           child: Padding(
             padding: const EdgeInsets.all(0),
             child: Material(
-              color: Colors.blueGrey,
+              color: Colors.blue[100],
               borderRadius: BorderRadius.circular(12),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -101,8 +101,8 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                                           fontWeight: FontWeight.w200,
                                         ),
                                       ))
-                                    : Image.network(
-                                        'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
+                                    : Image.asset(
+                                        'assets/images/dp.png',
                                         // fit: BoxFit.fitWidth,
                                       ),
                               ),
@@ -127,7 +127,7 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                           style: const TextStyle(
                               fontFamily: 'Gowun Batang',
                               fontSize: 20,
-                              color: Colors.white),
+                              color: Colors.black87),
                         ),
                         SizedBox(
                           child: switch (element.callType) {
@@ -204,7 +204,8 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                               '/' +
                               logTime.year.toString(),
                           style: TextStyle(
-                              color: Colors.white, fontFamily: 'Gowun Batang'),
+                              color: Colors.black54,
+                              fontFamily: 'Gowun Batang'),
                         ),
                       ],
                     ),
@@ -223,14 +224,14 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                                 //app is not opened
                               }
                             },
-                            color: Colors.white54,
+                            color: Colors.white70,
                             icon: Icon(Icons.message)),
                         IconButton(
                             onPressed: () async {
                               await FlutterPhoneDirectCaller.callNumber(
                                   element.number);
                             },
-                            color: Colors.white54,
+                            color: Colors.white70,
                             icon: Icon(Icons.call))
                       ],
                     ),

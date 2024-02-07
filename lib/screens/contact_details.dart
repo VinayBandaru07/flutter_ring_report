@@ -98,11 +98,11 @@ class _ContactDetailsState extends State<ContactDetails> {
                               widget.contactData.name.toString()[0],
                               style: TextStyle(
                                   fontSize: 180,
-                                  color: Colors.black,
+                                  color: Colors.black87,
                                   fontWeight: FontWeight.w300),
                             ))
-                          : Image.network(
-                              'https://i.ibb.co/VCsCNp2/blank-profile-picture-973460-640.png',
+                          : Image.asset(
+                              'assets/images/dp.png',
                               fit: kIsWeb ? BoxFit.cover : BoxFit.fill,
                               // fit: BoxFit.fitWidth,
                             ),
@@ -115,9 +115,14 @@ class _ContactDetailsState extends State<ContactDetails> {
                 length: 2,
                 child: Scaffold(
                   appBar: TabBar(
+                    labelColor: Colors.blue,
+                    indicatorColor: Colors.blue,
                     tabs: <Widget>[
                       Tab(
-                        icon: Icon(Icons.info_outline),
+                        icon: Icon(
+                          Icons.info_outline,
+                          color: Colors.blue,
+                        ),
                         text: 'Info',
                       ),
                       Tab(
@@ -140,6 +145,7 @@ class _ContactDetailsState extends State<ContactDetails> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue[100],
         onPressed: () async {
           Uri sms = Uri.parse('tel://${widget.contactData.number}');
           if (await launchUrl(sms)) {
