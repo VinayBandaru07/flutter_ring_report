@@ -64,17 +64,9 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     namesUnique = namesUnique.toSet().toList();
     numbersUnique = numbersUnique.toSet().toList();
-    print(namesUnique);
-    print('************************************************************');
-    print(numbersUnique);
-    print('************************************************************');
-    print(namesUnique.indexOf('null9533353404'));
-    print('************************************************************');
-    print(numbersUnique.indexOf('9533353404'));
-    print('************************************************************');
   }
 
-  void getLog(SearchDetails searchDetails) {
+  void filterSearchLog(SearchDetails searchDetails) {
     searchedItems.clear();
     if (searchDetails.searchType == SearchType.Name) {
       namesUnique.forEach((element) {
@@ -133,7 +125,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     SearchDetails searchDetails = SearchDetails(
                         searchText: searchText,
                         searchType: determineSearchType(searchText));
-                    getLog(searchDetails);
+                    filterSearchLog(searchDetails);
                   });
                   return SearchBar(
                     controller: controller,

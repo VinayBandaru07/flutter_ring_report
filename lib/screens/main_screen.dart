@@ -6,6 +6,43 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:ring_report/screens/ScrollableContactLogs.dart';
 import 'package:ring_report/screens/search_screen.dart';
 
+class AlwaysDisabledFocusNode extends FocusNode {
+  @override
+  bool get hasFocus => false;
+}
+
+class SearchDetails {
+  final String searchText;
+  final SearchType searchType;
+
+  SearchDetails({required this.searchText, required this.searchType});
+}
+
+enum SearchType {
+  Name,
+  PhoneNumber,
+}
+
+SearchType determineSearchType(String searchQuery) {
+  // Check if the search query is a valid phone number
+  bool isPhoneNumber(String input) {
+    final RegExp phoneNumberRegex = RegExp(
+        r'^\+?(\d{1,4})?[-.\s]?\(?(?:\d{1,4})?\)?[-.\s]?\d{1,6}[-.\s]?\d{1,6}[-.\s]?\d{1,9}$');
+    return phoneNumberRegex.hasMatch(input);
+  }
+
+  // Remove leading and trailing whitespaces
+  final cleanedQuery = searchQuery.trim();
+
+  // Check if the search query is a valid phone number
+  if (isPhoneNumber(cleanedQuery)) {
+    return SearchType.PhoneNumber;
+  }
+
+  // If not a valid phone number, consider it as a name search
+  return SearchType.Name;
+}
+
 class RingReport extends StatefulWidget {
   const RingReport({super.key});
 
@@ -18,6 +55,11 @@ class _RingReportState extends State<RingReport> {
   bool isSearched = false;
   bool isSorted = false;
 
+  List searchedItems = [];
+
+  List namesUnique = [];
+  List numbersUnique = [];
+
   searchAndGetLog(String searchText, SearchType searchType) async {
     if (searchType == SearchType.Name) {
       entries = await CallLog.query(
@@ -29,6 +71,24 @@ class _RingReportState extends State<RingReport> {
       );
     }
     setState(() {});
+  }
+
+  List<ListTile> getSearchSuggestionItems(SearchController controller) {
+    List<ListTile> items = [];
+    searchedItems = searchedItems.toSet().toList();
+    for (var element in searchedItems) {
+      items.add(ListTile(
+        title: Text(element.toString()),
+        onTap: () {
+          if (element.isNotEmpty) {
+            isSearched = true;
+            searchAndGetLog(element, determineSearchType(element));
+          }
+          controller.closeView(element);
+        },
+      ));
+    }
+    return items;
   }
 
   sortWithDuration() {
@@ -70,8 +130,41 @@ class _RingReportState extends State<RingReport> {
     }
   }
 
+  void filterSearchLog(SearchDetails searchDetails) {
+    searchedItems.clear();
+    if (searchDetails.searchType == SearchType.Name) {
+      namesUnique.forEach((element) {
+        if (element
+            .toLowerCase()
+            .contains(searchDetails.searchText.toLowerCase())) {
+          searchedItems.add(element);
+        }
+      });
+    } else {
+      numbersUnique.asMap().forEach((ind, element) {
+        if (element.contains(searchDetails.searchText.toLowerCase())) {
+          searchedItems.add(element);
+        }
+      });
+    }
+
+    setState(() {});
+  }
+
+  void makeSearchList() {
+    entries.toList().asMap().forEach((ind, element) {
+      if (element.name != null) {
+        namesUnique.add(element.name);
+      }
+      numbersUnique.add(element.number);
+    });
+    namesUnique = namesUnique.toSet().toList();
+    numbersUnique = numbersUnique.toSet().toList();
+  }
+
   void getLog() async {
     entries = await CallLog.get();
+    makeSearchList();
     setState(() {});
   }
 
@@ -97,32 +190,71 @@ class _RingReportState extends State<RingReport> {
           style: TextStyle(color: Colors.white),
         ),
         actions: [
-          IconButton(
-              color: Colors.white,
-              onPressed: () async {
-                try {
-                  SearchDetails result = await Navigator.push(context,
-                      MaterialPageRoute(builder: (context) {
-                    return SearchScreen(
-                      entries: entries,
-                    );
-                  }));
-                  if (result.searchText.isNotEmpty) {
-                    print(result.searchText);
-                    print(result.searchType);
-                    isSearched = true;
-                    searchAndGetLog(result.searchText, result.searchType);
-                  }
-                } catch (e) {}
-              },
-              icon: Icon(
-                Icons.search,
-                size: 30,
-              ))
+          // IconButton(
+          //     color: Colors.white,
+          //     onPressed: () async {
+          //       try {
+          //         SearchDetails result = await Navigator.push(context,
+          //             MaterialPageRoute(builder: (context) {
+          //           return SearchScreen(
+          //             entries: entries,
+          //           );
+          //         }));
+          //         if (result.searchText.isNotEmpty) {
+          //           print(result.searchText);
+          //           print(result.searchType);
+          //           isSearched = true;
+          //           searchAndGetLog(result.searchText, result.searchType);
+          //         }
+          //       } catch (e) {}
+          //     },
+          //     icon: Icon(
+          //       Icons.search,
+          //       size: 30,
+          //     ))
         ],
       ),
       body: SafeArea(
-        child: ScrollableContactLogs(contactLogs: entries),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 70.0),
+              child: ScrollableContactLogs(contactLogs: entries),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: SearchAnchor(
+                  isFullScreen: true,
+                  builder: (BuildContext context, SearchController controller) {
+                    controller.addListener(() {
+                      String searchText = controller.text;
+                      SearchDetails searchDetails = SearchDetails(
+                          searchText: searchText,
+                          searchType: determineSearchType(searchText));
+                      filterSearchLog(searchDetails);
+                    });
+                    return SearchBar(
+                      focusNode: AlwaysDisabledFocusNode(),
+                      hintText: 'Search name or number',
+                      controller: controller,
+                      padding: const MaterialStatePropertyAll<EdgeInsets>(
+                          EdgeInsets.symmetric(horizontal: 16.0)),
+                      onTap: () {
+                        controller.openView();
+                      },
+                      onChanged: (_) {
+                        controller.openView();
+                      },
+                      leading: const Icon(Icons.search),
+                    );
+                  },
+                  suggestionsBuilder:
+                      (BuildContext context, SearchController controller) {
+                    return getSearchSuggestionItems(controller);
+                  }),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: Wrap(
         //will break to another line on overflow
