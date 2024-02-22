@@ -17,7 +17,7 @@ class ContactDetails extends StatefulWidget {
 
 class _ContactDetailsState extends State<ContactDetails> {
   Iterable<CallLogEntry> entries = [];
-
+  int totalDuration = 0;
   void getPermissionUser() async {
     var status = Permission.phone;
     if (await status.isGranted) {
@@ -36,6 +36,11 @@ class _ContactDetailsState extends State<ContactDetails> {
       number: widget.contactData.number,
       // type: CallType.incoming,
     );
+    entries.toList().asMap().forEach((ind, element) {
+      print(element.duration as int);
+      totalDuration = totalDuration + (element.duration as int);
+    });
+    print(totalDuration);
     setState(() {});
   }
 
@@ -121,7 +126,6 @@ class _ContactDetailsState extends State<ContactDetails> {
                       Tab(
                         icon: Icon(
                           Icons.info_outline,
-                          color: Colors.blue,
                         ),
                         text: 'Info',
                       ),
@@ -134,7 +138,10 @@ class _ContactDetailsState extends State<ContactDetails> {
                   body: TabBarView(
                     children: <Widget>[
                       //List of widgets
-                      ContactInfo(contactData: widget.contactData),
+                      ContactInfo(
+                        contactData: widget.contactData,
+                        totalCallDuration: totalDuration,
+                      ),
                       ContactLogHistory(contactLogs: entries)
                     ],
                   ),

@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ring_report/screens/ScrollableContactLogs.dart';
 import 'package:ring_report/screens/search_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class AlwaysDisabledFocusNode extends FocusNode {
@@ -62,6 +63,11 @@ class _RingReportState extends State<RingReport> {
 
   List namesUnique = [];
   List numbersUnique = [];
+
+  initStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    var psn = (prefs.getStringList('previouslySavedNumbers'));
+  }
 
   searchAndGetLog(String searchText, SearchType searchType) async {
     if (searchType == SearchType.Name) {
@@ -187,6 +193,7 @@ class _RingReportState extends State<RingReport> {
 
   @override
   void initState() {
+    initStorage();
     getPermissionUser();
     super.initState();
   }

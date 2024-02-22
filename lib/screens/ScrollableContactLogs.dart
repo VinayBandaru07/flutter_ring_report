@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ring_report/screens/contact_details.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+enum Options { interested, notInterested }
 
 class ScrollableContactLogs extends StatefulWidget {
   ScrollableContactLogs({
@@ -232,7 +235,63 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
                                   element.number);
                             },
                             color: Colors.white70,
-                            icon: Icon(Icons.call))
+                            icon: Icon(Icons.call)),
+                        PopupMenuButton<Options>(
+                          iconColor: Colors.white,
+                          // Callback that sets the selected popup menu item.
+                          onSelected: (Options item) async {
+                            if (item == Options.interested) {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              var psn = (prefs
+                                  .getStringList('previouslySavedNumbers'));
+                              var pso = (prefs
+                                  .getStringList('previouslySavedSelections'));
+                              int? ind = psn?.indexOf(element.number);
+                              print(ind.toString());
+                              if (ind != -1) {
+                                pso?[ind ?? 0] = item.toString();
+                              } else {
+                                psn?.add(element.number);
+                                pso?.add(item.toString());
+                              }
+                              await prefs.setStringList(
+                                  'previouslySavedNumbers', psn!);
+                              await prefs.setStringList(
+                                  'previouslySavedSelections', pso!);
+                            } else {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              var psn = (prefs
+                                  .getStringList('previouslySavedNumbers'));
+                              var pso = (prefs
+                                  .getStringList('previouslySavedSelections'));
+                              int? ind = psn?.indexOf(element.number);
+                              if (ind != -1) {
+                                pso?[ind ?? 0] = item.toString();
+                              } else {
+                                psn?.add(element.number);
+                                pso?.add(item.toString());
+                              }
+                              await prefs.setStringList(
+                                  'previouslySavedNumbers', psn!);
+                              await prefs.setStringList(
+                                  'previouslySavedSelections', pso!);
+                            }
+                            setState(() {});
+                          },
+                          itemBuilder: (BuildContext context) =>
+                              <PopupMenuEntry<Options>>[
+                            const PopupMenuItem<Options>(
+                              value: Options.interested,
+                              child: Text('Interested'),
+                            ),
+                            const PopupMenuItem<Options>(
+                              value: Options.notInterested,
+                              child: Text('Not-Interested'),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -250,6 +309,7 @@ class _CitizenHospitalDayBookingsState extends State<ScrollableContactLogs> {
   void initState() {
     // TODO: implement initState
     makeListItems();
+
     super.initState();
   }
 
